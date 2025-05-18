@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="240.0" prefWidth="480.0" style="-fx-background-color: #0B2447;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="newt.clipper.ui.Controller">
+   <children>
+      <TextField fx:id="startTimeFieldText" layoutX="207.0" layoutY="73.0" prefHeight="26.0" prefWidth="252.0" promptText="HH:MM:SS" style="-fx-background-color: transparent; -fx-border-color: #576CBC; visibility: 100; -FX-TEXT-FILL: #FFFF;" />
+      <Label fx:id="titleLabel" layoutX="147.0" layoutY="14.0" style="-fx-text-fill: #A5D7E8;" text="ClipCutter by: Newt" textAlignment="CENTER" textFill="#fffff1">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <TextField fx:id="endTimeFieldText" layoutX="207.0" layoutY="137.0" prefHeight="26.0" prefWidth="252.0" promptText="HH:MM:SS" style="-fx-background-color: transparent; -fx-border-color: #576CBC; -fx-text-fill: #FFFF;" />
+      <Label fx:id="startLabel" layoutX="207.0" layoutY="50.0" style="-fx-text-fill: #A5D7E8;" text="Start:" textFill="#f2f2f2" />
+      <Label fx:id="endLabel" layoutX="207.0" layoutY="117.0" style="-fx-text-fill: #A5D7E8;" text="End:" />
+      <Button layoutX="414.0" layoutY="202.0" mnemonicParsing="false" onAction="#onCutButtonClicked" style="-fx-background-color: #A5D7E8; -fx-background-radius: 7px;" text="Cut" />
+      <TextField fx:id="clipNameTextField" layoutX="159.0" layoutY="203.0" prefHeight="26.0" prefWidth="229.0" promptText="ClipCutter-highlight" style="-fx-background-color: transparent; -fx-border-color: #576CBC; -fx-text-fill: #FFFF;" />
+      <Label fx:id="clipNameLabel" layoutX="30.0" layoutY="209.0" style="-fx-text-fill: #A5D7E8;" text="Clip name (optional):" />
+      <ImageView fx:id="imageView" fitHeight="132.0" fitWidth="172.0" layoutX="22.0" layoutY="55.0" onMouseClicked="#onViewButtonClicked" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@multimedia.png" />
+         </image></ImageView>
+      <CheckBox fx:id="deleteCheckbox" layoutX="207.0" layoutY="174.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="148.0" style="-fx-text-fill: #A5D7E8;" text="Delete original clip" textFill="#a5d7e8" />
+   </children>
+</AnchorPane>
