@@ -10,14 +10,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 
 public class Handler {
 
-    private static URL ffmpegPath;
+    private static final URL ffmpegPath;
 
     static {
         ffmpegPath = Objects.requireNonNull(Main.class.getResource("ffmpeg.exe"));
@@ -63,8 +62,8 @@ public class Handler {
     }
 
 
-    public BufferedImage getVideoThumbnail(File currentFile) throws IOException {
-        FFmpeg ffmpeg = new FFmpeg(Paths.get(ffmpegPath.toString()));
+    public BufferedImage getVideoThumbnail(File currentFile) throws IOException, URISyntaxException {
+        FFmpeg ffmpeg = new FFmpeg(Paths.get(ffmpegPath.toURI()));
         final BufferedImage[] bfImage = new BufferedImage[1]; // Usar array para contornar a limitação de variável final
 
         ffmpeg.addInput(UrlInput.fromPath(Paths.get(currentFile.getAbsolutePath())))
@@ -89,7 +88,8 @@ public class Handler {
                     }
                 }))
                 .execute();
-
         return bfImage[0];
     }
+
+
 }

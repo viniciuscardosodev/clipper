@@ -57,7 +57,7 @@ public class Controller {
     private Handler handler;
 
     @FXML
-    public void initialize() {
+    public void initialize() throws IOException, InterruptedException {
         // Código que será executado logo após os componentes do FXML serem carregados
         startTimeFieldText.setText("00:00:00");
         endTimeFieldText.setText("00:00:00");
@@ -81,6 +81,8 @@ public class Controller {
         var videoPath = Main.videoPath;
         if (videoPath != null) {
             updateImageView(videoPath.toFile());
+            var total = getVideoDuration(videoPath);
+            endTimeFieldText.setText(total);
         }
 
     }
@@ -91,7 +93,11 @@ public class Controller {
             Platform.runLater(() -> {
                 imageView.setImage(fxImage);
             });
-        } catch (IOException e) {
+            System.out.println(Path.of(currentFile.getAbsolutePath()));
+            var total = getVideoDuration(Path.of(currentFile.getAbsolutePath()));
+            endTimeFieldText.setText(total);
+        } catch (IOException | InterruptedException | URISyntaxException e ) {
+            System.out.println(e.getMessage());
             cannotCreateDirectoryAlert.showAndWait();
         }
     }
