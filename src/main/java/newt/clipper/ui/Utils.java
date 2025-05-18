@@ -121,6 +121,8 @@ public abstract class Utils {
                 videoPath.toAbsolutePath().toString()
         );
 
+        System.out.println(videoPath.toAbsolutePath().toString());
+
         builder.redirectErrorStream(true);
         Process process = builder.start();
 
