@@ -57,7 +57,7 @@ public class Controller {
     private Handler handler;
 
     @FXML
-    public void initialize() throws IOException, InterruptedException {
+    public void initialize() throws URISyntaxException {
         // Código que será executado logo após os componentes do FXML serem carregados
         startTimeFieldText.setText("00:00:00");
         endTimeFieldText.setText("00:00:00");
@@ -81,7 +81,7 @@ public class Controller {
         var videoPath = Main.videoPath;
         if (videoPath != null) {
             updateImageView(videoPath.toFile());
-            var total = getVideoDuration(videoPath);
+            var total = Handler.getVideoDuration(videoPath);
             endTimeFieldText.setText(total);
         }
 
@@ -94,9 +94,9 @@ public class Controller {
                 imageView.setImage(fxImage);
             });
             System.out.println(Path.of(currentFile.getAbsolutePath()));
-            var total = getVideoDuration(Path.of(currentFile.getAbsolutePath()));
+            var total = Handler.getVideoDuration(Path.of(currentFile.getAbsolutePath()));
             endTimeFieldText.setText(total);
-        } catch (IOException | InterruptedException | URISyntaxException e ) {
+        } catch (IOException | URISyntaxException e ) {
             System.out.println(e.getMessage());
             cannotCreateDirectoryAlert.showAndWait();
         }
@@ -122,11 +122,19 @@ public class Controller {
         String clipName = clipNameTextField.getText();
         String newClipName = (clipName == null || clipName.isBlank()) ? generateClipName() : checkCompletePath(clipName);
 
-        handler.cutClip(currentFile, newClipName, startTimeFieldText.getText(), endTimeFieldText.getText());
+        try {
+            handler.cutClip(currentFile, newClipName, startTimeFieldText.getText(), endTimeFieldText.getText());
+        } catch (URISyntaxException e) {
+            cannotCreateDirectoryAlert.showAndWait();
+            return;
+        }
 
         if (deleteCheckbox.isSelected()) {
             currentFile.delete();
         }
+
+
+        imageView.setImage(new Image(Objects.requireNonNull(Main.class.getResource("multimedia.png")).toString()));
     }
 
     @FXML

@@ -1,7 +1,10 @@
 package newt.clipper.ffmpeg;
 
 import com.github.kokorin.jaffree.ffmpeg.*;
+import com.github.kokorin.jaffree.ffprobe.FFprobe;
+import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
 import newt.clipper.Main;
+import newt.clipper.ui.Utils;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -10,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
@@ -17,48 +21,26 @@ import java.util.Objects;
 public class Handler {
 
     private static final URL ffmpegPath;
+    private static final URL ffprobePath;
 
     static {
         ffmpegPath = Objects.requireNonNull(Main.class.getResource("ffmpeg.exe"));
+        ffprobePath = Objects.requireNonNull(Main.class.getResource("ffprobe.exe"));
     }
 
-    public void cutClip(File currentFile, String newClipName, String startTime, String endTime) {
-        List<String> comando = List.of(
-                ffmpegPath.toString(),
-                "-ss", startTime,
-                "-to", endTime,
-                "-i", currentFile.toPath().toString(),
-                "-c", "copy", newClipName
-        );
-
-        ProcessBuilder builder = new ProcessBuilder(comando);
-        builder.redirectErrorStream(true); // junta stderr com stdout
-        Process processo = null;
-        try {
-            processo = builder.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Lê e imprime a saída do processo
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(processo.getInputStream()))) {
-            String linha;
-            while ((linha = reader.readLine()) != null) {
-                System.out.println(linha);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Could not find ffmpeg path.");
-        }
-
-        int exitCode = 0;
-        try {
-            exitCode = processo.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (exitCode != 0) {
-            throw new RuntimeException("Erro ao cortar o vídeo. Código de saída: " + exitCode);
-        }
+    public void cutClip(File currentFile, String newClipName, String startTime, String endTime) throws URISyntaxException {
+        FFmpeg ffmpeg = new FFmpeg(Paths.get(ffmpegPath.toURI()));
+        String name = currentFile.getName();
+        ffmpeg.addArgument("-ss")
+                .addArgument(startTime)
+                .addArgument("-to")
+                .addArgument(endTime)
+                .addInput(UrlInput.fromPath(currentFile.toPath()))
+                .addOutput(UrlOutput.toPath(Path.of(newClipName))
+                        .setFormat(name.substring(name.lastIndexOf(".") + 1))     // defina o formato se quiser garantir a extensão correta
+                        .addArgument("-c")
+                        .addArgument("copy"))
+                .execute();
     }
 
 
@@ -89,6 +71,19 @@ public class Handler {
                 }))
                 .execute();
         return bfImage[0];
+    }
+
+    public static String getVideoDuration(Path videoPath) throws URISyntaxException {
+
+        FFprobe fFprobe = new FFprobe(Paths.get(ffprobePath.toURI()));
+
+        FFprobeResult result =  fFprobe.setInput(videoPath)
+                                .setShowFormat(true)
+                                .execute();
+
+        double durationSeconds = result.getFormat().getDuration();
+
+        return Utils.formatDuration(durationSeconds);
     }
 
 

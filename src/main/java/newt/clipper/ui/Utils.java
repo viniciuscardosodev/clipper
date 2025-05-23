@@ -112,35 +112,6 @@ public abstract class Utils {
         }
     }
 
-    public static String getVideoDuration(Path videoPath) throws IOException, InterruptedException {
-        ProcessBuilder builder = new ProcessBuilder(
-                "ffprobe",
-                "-v", "error",
-                "-show_entries", "format=duration",
-                "-of", "default=noprint_wrappers=1:nokey=1",
-                videoPath.toAbsolutePath().toString()
-        );
-
-        System.out.println(videoPath.toAbsolutePath().toString());
-
-        builder.redirectErrorStream(true);
-        Process process = builder.start();
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            String line = reader.readLine();
-            if (line != null) {
-                double seconds = Double.parseDouble(line.trim());
-                return formatDuration(seconds);
-            }
-        }
-
-        int exitCode = process.waitFor();
-        if (exitCode != 0) {
-            throw new RuntimeException("ffprobe failed with exit code " + exitCode);
-        }
-
-        return null;
-    }
 
     public static boolean isBefore(String time1, String time2) {
         // Converte as minutagens em segundos
